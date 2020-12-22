@@ -1,0 +1,13 @@
+Base Reglas
+
+Regla1... Si la planta crece muy poco -> deficiencia de nitrogeno
+Regla2... Si la planta tiene color amarillo palido -> deficiencia de nitrogeno
+Regla3... Si las hojas tiene un color pardo rojizo -> deficiencia de nitrogeno
+Regla4... Si la raiz de la planta tiene poco crecimiento -> deficiencia de fosforo
+Regla5... Si la planta tiene un tallo fusiforme -> deficiencia de fosforo
+Regla6... Si la planta es de color purpura -> deficiencia de fosforo
+Regla7... Si la planta tiene un retrazo de madurez -> deficiencia de fosforo
+Regla8... Si los bordes de la las hojas de la planta estan chamuscados- deficiencia de potasio
+Regla9... Si la planta tiene tallos debilitados -> deficiencia de potasio
+Regla10.. Si la planta tiene semillas o frutas marchitas -> deficiencia de potasio
+
