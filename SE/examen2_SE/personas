@@ -1,0 +1,50 @@
+CREATE 	(atanasio:Persona {name:'Atanasio', edad:22,porcentaje:0.22}),
+		(aron:Persona {name:'Arón', edad:33,porcentaje: 0.78}),
+		(abdon:Persona {name:'Abdón', edad:43,porcentaje: 0.76}),
+		(abel:Persona {name:'Abel', edad:24,porcentaje: 0.79}),
+		(abelardo:Persona {name:'Abelardo', edad:44,porcentaje: 0.050}),
+		(abrahan:Persona {name:'Abrahán', edad:45,porcentaje: 0.80}),
+		(absolon:Persona {name:'Absalón', edad:49,porcentaje: 0.030}),
+		(adrian:Persona {name:'Adrián', edad:56,porcentaje: 0.82}),
+		(arturo:Persona {name:'Arturo', edad:34,porcentaje: 0.32}),
+		(aurelio:Persona {name:'Aurelio', edad:20,porcentaje: 0.005}),
+		(aurora:Persona {name:'Aurora', edad:54,porcentaje: 0.49}),
+		(barbara:Persona {name:'Bárbara', edad:32,porcentaje: 0.43}),
+		(beatriz:Persona {name:'Beatriz', edad:55,porcentaje: 0.67}),
+		(belen:Persona {name:'Belén', edad:59,porcentaje: 0.38}),
+		(bernardo:Persona {name:'Bernardo', edad:40,porcentaje: 0.12}),
+		(blanca:Persona {name:'Blanca', edad:53,porcentaje: 0.79}),
+		(bruno:Persona {name:'Bruno', edad:20,porcentaje: 0.88}),
+		(carina:Persona {name:'Carina', edad:34,porcentaje: 0.76}),
+		(carlos:Persona {name:'Carlos', edad:50,porcentaje: 0.33}),
+		(carmen:Persona {name:'Carmen', edad:23,porcentaje: 0.035}),
+		(carolina:Persona {name:'Carolina', edad:25,porcentaje: 0.68})
+
+similitud:
+
+MATCH (start:Persona)-[x:RATED]->(m:Pelicula)<-[y:RATED]-(end:Persona)
+WITH  SUM(x.rating * y.rating) AS xyDotProduct,
+      SQRT(REDUCE(xDot = 0.0, a IN COLLECT(x.rating) | xDot + a^2)) AS xLength,
+      SQRT(REDUCE(yDot = 0.0, b IN COLLECT(y.rating) | yDot + b^2)) AS yLength,
+      start, end
+MERGE (start)-[s:SIMILARITY]-(end)
+SET   s.similarity = xyDotProduct / (xLength * yLength)
+
+vecino mas cercano:
+
+MATCH    (start:Persona {name:'Atanasio'})-[s:SIMILARITY]-(end:Persona)
+WITH     end, s.similarity AS sim
+ORDER BY sim DESC
+LIMIT    5
+RETURN   end.name AS Neighbor, sim AS Similarity
+
+recomendar:
+
+MATCH    (b:Persona)-[r:RATED]->(m:Pelicula), (b)-[s:SIMILARITY]-(a:Persona {name:'Carmen'})
+WHERE    NOT((a)-[:RATED]->(m))
+WITH     m, s.similarity AS similarity, r.rating AS rating
+ORDER BY m.name, similarity DESC
+WITH     m.name AS pelicula, COLLECT(rating)[0..3] AS ratings
+WITH     pelicula, REDUCE(s = 0, i IN ratings | s + i)*1.0/20 AS reco
+ORDER BY reco DESC
+RETURN   pelicula AS Pelicula, reco AS Recommendation
